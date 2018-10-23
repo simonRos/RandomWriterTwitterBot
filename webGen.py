@@ -8,15 +8,21 @@ api = connect()
 
 target_user = 'USATODAY'
 debug = False
+debug_limit = 10
+debug_count = 0
 
 ww = WordWeb()
 for tweet in tweepy.Cursor(api.user_timeline,id=target_user).items():
-    last = None
-    processed_tweet = tweet.text.replace('\n',' ').split(' ')
-    for p in processed_tweet:
-        if p.replace(' ','') != '':
-            ww.add(last, p)
-            last = p
+    if debug_count < debug_limit:
+        last = None
+        processed_tweet = tweet.text.replace('\n',' ').split(' ')
+        for p in processed_tweet:
+            if p.replace(' ','') != '':
+                ww.add(last, p)
+                last = p
+    else:
+        break;
+    debug_count += 1
 
 if debug == True:
     with open("web.txt", 'w') as debugFile:
