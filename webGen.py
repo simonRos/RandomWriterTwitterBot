@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 
 from WordWeb import *
-import creds
+from conn import *
 import tweepy
 
-auth = tweepy.OAuthHandler(creds.consumer_key, creds.consumer_secret)
-auth.set_access_token(creds.access_token, creds.access_token_secret)
-api = tweepy.API(auth)
+api = connect()
 
 target_user = 'USATODAY'
 debug = False
