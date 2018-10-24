@@ -7,31 +7,18 @@ import tweepy
 api = connect()
 
 target_user = 'USATODAY'
-debug = False
-debug_limit = 10
-debug_count = 0
 
 ww = WordWeb()
-for tweet in tweepy.Cursor(api.user_timeline,id=target_user).items():
-    if debug_count < debug_limit:
-        last = None
-        processed_tweet = tweet.text.replace('\n',' ').split(' ')
-        for p in processed_tweet:
-            if p.replace(' ','') != '':
-                ww.add(last, p)
-                last = p
-    else:
-        break;
-    debug_count += 1
+for status in tweepy.Cursor(api.user_timeline,
+                                  screen_name = target_user,
+                                  include_rts = False,
+                                  tweet_mode = 'extended').items():
+    tweet = status._json
+    last = None
+    processed_tweet = tweet['full_text'].replace('\n',' ').split(' ')
+    for p in processed_tweet:
+        if p.replace(' ','') != '':
+            ww.add(last, p)
+            last = p
 
-if debug == True:
-    with open("web.txt", 'w') as debugFile:
-        for k,v in ww.nodes.items():
-            try:
-                debugFile.write(str(k))
-                debugFile.write('\t'+str(len(v.followers))+'\n')
-                for f in v.followers:
-                    debugFile.write('\t'+f.word)
-                    debugFile.write('\n\t\t'+str(v.followers[f])+'\n')
-            except:
-                pass
+print(count)
