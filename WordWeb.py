@@ -16,9 +16,12 @@ class WordNode:
         self.ender = False
         #empty/base nodes should be allowed
         if word != None:
+            try:
             #characters that denote the end of a sentence
-            if word[-1] in ['!','?','.']:
-                self.ender = True  
+                if word[-1] in ['!','?','.']:
+                    self.ender = True
+            except IndexError as e:
+                print(e)
         else:
             self.ender = False
             
@@ -51,4 +54,36 @@ class WordWeb:
         self.nodes[front].add(self.nodes[follow])
         if front == None:
             self.nodes[follow].starter = True
+
+    def getSentence(self, start_node = None):
+        """
+        Holds metadata for recursive method 
+        """
+        import random
+        #metadata
+        sentence = []
+        #recursive method
+        def _getSentence(node):
+            """
+            Recursively traverses web to produce a sentence
+            """
+            if node.word != None:
+                sentence.append(node.word)
+            if node.ender == True or len(node.followers) <= 0:
+                return
+            #weighted random choose next word
+            choices = []
+            for follower in node.followers:
+                for _ in range(node.followers[follower]):
+                    choices.append(follower)
+            return _getSentence(random.choice(choices))
+
+        if start_node == None:
+            start_node = self.nodes[None]
+        elif isinstance(start_node, WordNode) == False:
+            raise TypeError('Argument to .getSentence must be of type WordNode')
+        _getSentence(node = start_node)
+        return (' '.join(sentence))
+        
+        
 
